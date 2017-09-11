@@ -6,6 +6,11 @@ __pycache__/
 # Django
 *.log
 local_settings.py
+*.sqlite3
 
 # PyCharm
 .idea/
+
+# Heroku
+log/
+tmp/
