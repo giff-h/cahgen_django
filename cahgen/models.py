@@ -13,9 +13,6 @@ class PackProfile(models.Model):
     def __str__(self):
         return f'#{self.value} {self.color_name}'
 
-    class Meta:
-        ordering = ('created',)
-
 
 class CardsList(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -26,9 +23,6 @@ class CardsList(models.Model):
     def __str__(self):
         return self.name
 
-    class Meta:
-        ordering = ('created',)
-
 
 class RenderSpec(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -36,10 +30,7 @@ class RenderSpec(models.Model):
     packs = models.ManyToManyField(CardsList)
 
     def __str__(self):
-        return f'{self.name}: {self.packs}'
-
-    class Meta:
-        ordering = ('created',)
+        return f'{self.name} :: {self.packs.all()}'
 
 
 class PDF(models.Model):
@@ -50,6 +41,3 @@ class PDF(models.Model):
 
     def __str__(self):
         return str(self.render_spec)
-
-    class Meta:
-        ordering = ('created',)
