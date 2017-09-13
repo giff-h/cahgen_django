@@ -1,0 +1,7 @@
+- Write serializers
+- Load dummy test data
+- Practice database dumps and reloads
+- Incorporate pdfgen engine
+  - Clean up grid printing
+  - Implement collating and smart stacking
+  - Tidy up and document engine interface
