@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from rest_framework import generics, permissions
+from rest_framework import permissions, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -18,34 +18,22 @@ def api_root(request, format=None):
     })
 
 
-class UserList(generics.ListAPIView):
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited.
+    This viewset automatically provides `list` and `detail` actions.
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
 
-class UserDetail(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class PackProfileList(generics.ListCreateAPIView):
+class PackProfileViewSet(viewsets.ModelViewSet):
     """
-    List all pack profiles, or create a new one.
-    """
-    queryset = PackProfile.objects.all()
-    serializer_class = PackProfileSerializer
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
-
-class PackProfileDetail(generics.RetrieveUpdateDestroyAPIView):
-    """
-    Retrieve, update or delete a pack profile.
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
     """
     queryset = PackProfile.objects.all()
     serializer_class = PackProfileSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
