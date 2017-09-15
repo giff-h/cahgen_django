@@ -4,35 +4,37 @@ from rest_framework import serializers
 from .models import CardsList, PackProfile, PDF, RenderSpec
 
 
-class UserSerializer(serializers.ModelSerializer):
-    packprofiles = serializers.PrimaryKeyRelatedField(many=True, queryset=PackProfile.objects.all())
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    packprofiles = serializers.HyperlinkedRelatedField(many=True,
+                                                       view_name='packprofile-detail',
+                                                       read_only=True)  # FIXME not showing up properly, throws 500
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'packprofiles')
+        fields = ('url', 'id', 'username', 'packprofiles')
 
 
-class PackProfileSerializer(serializers.ModelSerializer):
+class PackProfileSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
 
     class Meta:
         model = PackProfile
-        fields = ('owner', 'id', 'created', 'value', 'color_name')
+        fields = ('url', 'id', 'owner', 'created', 'value', 'color_name')
 
 
-class CardsListSerializer(serializers.ModelSerializer):
+class CardsListSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = CardsList
-        fields = ('id', 'created', 'name', 'cards', 'profile')
+        fields = ('url', 'id', 'created', 'name', 'cards', 'profile')
 
 
-class RenderSpecSerializer(serializers.ModelSerializer):
+class RenderSpecSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = RenderSpec
-        fields = ('id', 'created', 'name', 'packs')
+        fields = ('url', 'id', 'created', 'name', 'packs')
 
 
-class PDFSerializer(serializers.ModelSerializer):
+class PDFSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = PDF
-        fields = ('id', 'created', 'pdf', 'render_spec')
+        fields = ('url', 'id', 'created', 'pdf', 'render_spec')

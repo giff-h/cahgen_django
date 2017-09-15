@@ -121,3 +121,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+
+# DRF
+
+REST_FRAMEWORK = {
+    'PAGE_SIZE': 10,
+}

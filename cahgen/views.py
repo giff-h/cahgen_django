@@ -1,10 +1,21 @@
 from django.contrib.auth.models import User
 from rest_framework import generics, permissions
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
 from .models import PackProfile, CardsList, RenderSpec, PDF
 from .permissions import IsOwnerOrReadOnly
 from .serializers import UserSerializer, PackProfileSerializer, CardsListSerializer,\
                          RenderSpecSerializer, PDFSerializer
+
+
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        'users': reverse('user-list', request=request, format=format),
+        'packprofiles': reverse('packprofile-list', request=request, format=format)
+    })
 
 
 class UserList(generics.ListAPIView):
