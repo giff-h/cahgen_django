@@ -24,37 +24,17 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
 
 
-class PackProfileList(mixins.ListModelMixin,
-                      mixins.CreateModelMixin,
-                      generics.GenericAPIView):
+class PackProfileList(generics.ListCreateAPIView):
     """
     List all pack profiles, or create a new one.
     """
     queryset = PackProfile.objects.all()
     serializer_class = PackProfileSerializer
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-
-class PackProfileDetail(mixins.RetrieveModelMixin,
-                        mixins.UpdateModelMixin,
-                        mixins.DestroyModelMixin,
-                        generics.GenericAPIView):
+class PackProfileDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Retrieve, update or delete a pack profile.
     """
     queryset = PackProfile.objects.all()
     serializer_class = PackProfileSerializer
-
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
