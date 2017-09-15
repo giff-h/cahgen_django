@@ -1,7 +1,5 @@
 from django.contrib.auth.models import User, Group
-from django.http import Http404
-from rest_framework import generics, mixins, status, viewsets
-from rest_framework.response import Response
+from rest_framework import generics, viewsets
 
 from .models import PackProfile, CardsList, RenderSpec, PDF
 from .serializers import UserSerializer, GroupSerializer, PackProfileSerializer, CardsListSerializer,\
