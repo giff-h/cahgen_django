@@ -1,19 +1,15 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from .models import CardsList, PackProfile, PDF, RenderSpec
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
+    packprofiles = serializers.PrimaryKeyRelatedField(many=True, queryset=PackProfile.objects.all())
+
     class Meta:
         model = User
-        fields = ('url', 'username', 'email', 'groups')
-
-
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Group
-        fields = ('url', 'name')
+        fields = ('id', 'username', 'packprofiles')
 
 
 class PackProfileSerializer(serializers.ModelSerializer):

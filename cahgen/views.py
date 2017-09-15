@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import generics, viewsets
 
 from .models import PackProfile, CardsList, RenderSpec, PDF
-from .serializers import UserSerializer, GroupSerializer, PackProfileSerializer, CardsListSerializer,\
+from .serializers import UserSerializer, PackProfileSerializer, CardsListSerializer,\
                          RenderSpecSerializer, PDFSerializer
 
 
@@ -12,14 +12,6 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-
-
-class GroupViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
 
 
 class PackProfileList(generics.ListCreateAPIView):
