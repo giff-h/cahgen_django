@@ -13,9 +13,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PackProfileSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+
     class Meta:
         model = PackProfile
-        fields = ('id', 'created', 'value', 'color_name')
+        fields = ('owner', 'id', 'created', 'value', 'color_name')
 
 
 class CardsListSerializer(serializers.ModelSerializer):
