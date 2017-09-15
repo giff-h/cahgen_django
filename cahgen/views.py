@@ -1,8 +1,7 @@
 from django.contrib.auth.models import User, Group
 from django.http import Http404
-from rest_framework import status, viewsets
+from rest_framework import generics, mixins, status, viewsets
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from .models import PackProfile, CardsList, RenderSpec, PDF
 from .serializers import UserSerializer, GroupSerializer, PackProfileSerializer, CardsListSerializer,\
@@ -25,47 +24,37 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
 
 
-class PackProfileList(APIView):
+class PackProfileList(mixins.ListModelMixin,
+                      mixins.CreateModelMixin,
+                      generics.GenericAPIView):
     """
     List all pack profiles, or create a new one.
     """
-    def get(self, request, format=None):
-        pp = PackProfile.objects.all()
-        serializer = PackProfileSerializer(pp, many=True)
-        return Response(serializer.data)
+    queryset = PackProfile.objects.all()
+    serializer_class = PackProfileSerializer
 
-    def post(self, request, format=None):
-        serializer = PackProfileSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
-class PackProfileDetail(APIView):
+class PackProfileDetail(mixins.RetrieveModelMixin,
+                        mixins.UpdateModelMixin,
+                        mixins.DestroyModelMixin,
+                        generics.GenericAPIView):
     """
     Retrieve, update or delete a pack profile.
     """
-    def get_object(self, pk):
-        try:
-            return PackProfile.objects.get(pk=pk)
-        except PackProfile.DoesNotExist:
-            raise Http404
+    queryset = PackProfile.objects.all()
+    serializer_class = PackProfileSerializer
 
-    def get(self, request, pk, format=None):
-        pp = self.get_object(pk)
-        serializer = PackProfileSerializer(pp)
-        return Response(serializer.data)
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
 
-    def put(self, request, pk, format=None):
-        pp = self.get_object(pk)
-        serializer = PackProfileSerializer(pp, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
 
-    def delete(self, request, pk, format=None):
-        pp = self.get_object(pk)
-        pp.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
