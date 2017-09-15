@@ -1,9 +1,8 @@
 from django.contrib.auth.models import User, Group
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.http import Http404
 from rest_framework import status, viewsets
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import PackProfile, CardsList, RenderSpec, PDF
 from .serializers import UserSerializer, GroupSerializer, PackProfileSerializer, CardsListSerializer,\
@@ -26,17 +25,16 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
 
 
-@api_view(['GET', 'POST'])
-def pack_profile_list(request):
+class PackProfileList(APIView):
     """
     List all pack profiles, or create a new one.
     """
-    if request.method == 'GET':
+    def get(self, request, format=None):
         pp = PackProfile.objects.all()
         serializer = PackProfileSerializer(pp, many=True)
         return Response(serializer.data)
 
-    elif request.method == 'POST':
+    def post(self, request, format=None):
         serializer = PackProfileSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -44,27 +42,30 @@ def pack_profile_list(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def pack_profile_detail(request, pk):
+class PackProfileDetail(APIView):
     """
     Retrieve, update or delete a pack profile.
     """
-    try:
-        pp = PackProfile.objects.get(pk=pk)
-    except PackProfile.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    def get_object(self, pk):
+        try:
+            return PackProfile.objects.get(pk=pk)
+        except PackProfile.DoesNotExist:
+            raise Http404
 
-    if request.method == 'GET':
+    def get(self, request, pk, format=None):
+        pp = self.get_object(pk)
         serializer = PackProfileSerializer(pp)
         return Response(serializer.data)
 
-    elif request.method == 'PUT':
+    def put(self, request, pk, format=None):
+        pp = self.get_object(pk)
         serializer = PackProfileSerializer(pp, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'DELETE':
+    def delete(self, request, pk, format=None):
+        pp = self.get_object(pk)
         pp.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
