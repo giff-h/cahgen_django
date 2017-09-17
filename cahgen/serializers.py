@@ -7,7 +7,7 @@ from .models import CardsList, PackProfile, PDF, RenderSpec
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     packprofiles = serializers.HyperlinkedRelatedField(many=True,
                                                        view_name='packprofile-detail',
-                                                       read_only=True)  # FIXME not showing up properly, throws 500
+                                                       read_only=True)
 
     class Meta:
         model = User

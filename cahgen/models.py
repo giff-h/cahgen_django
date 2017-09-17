@@ -9,7 +9,7 @@ class PackProfile(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     value = models.CharField(max_length=6, validators=[RegexValidator(regex=r'[0-9a-f]{6}', flags=IGNORECASE)])
     color_name = models.CharField(max_length=30, null=True)
-    owner = models.ForeignKey('auth.User', related_name='snippets', on_delete=models.CASCADE)
+    owner = models.ForeignKey('auth.User', related_name='packprofiles', on_delete=models.CASCADE)
 
     def __str__(self):
         return f'#{self.value} {self.color_name}'
