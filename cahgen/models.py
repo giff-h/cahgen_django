@@ -67,14 +67,14 @@ class PDF(BaseModel):
         else:
             generator = pdf_gen.WhiteCardWriter(pdf, 2.5, 3.5, 10, 10, 14, 35, 'Calling All Heretics',
                                                 path.join(THIS_DIR, 'lib/cards.png'), 30, True)
-        for cl in self.render_spec.packs:
+        for cl in self.render_spec.packs.iterator():
             profile = pdf_gen.PackProfile(cl.name, '#' + cl.profile.value)
             generator.add_pack(cl.cards.splitlines(), profile)
 
         generator.write()
-        return pdf.getvalue()
+        self.generated_content = pdf.getvalue()
 
 
 @receiver(models.signals.pre_save, sender=PDF)
 def pdf_pre_save(sender, instance, **kwargs):
-    return instance.create_pdf()
+    instance.create_pdf()
