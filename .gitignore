@@ -15,5 +15,8 @@ local_settings.py
 log/
 tmp/
 
+# OS X
+.DS_Store
+
 # Other
 notes

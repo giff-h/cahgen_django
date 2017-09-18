@@ -37,13 +37,13 @@ class PackProfileSerializer(serializers.HyperlinkedModelSerializer, BaseSerializ
 class CardsListSerializer(serializers.HyperlinkedModelSerializer, BaseSerializerMixin):
     class Meta:
         model = CardsList
-        fields = BaseSerializerMixin.common_fields + ('name', 'cards', 'profile')
+        fields = BaseSerializerMixin.common_fields + ('name', 'cards', 'is_black', 'profile')
 
 
 class RenderSpecSerializer(serializers.HyperlinkedModelSerializer, BaseSerializerMixin):
     class Meta:
         model = RenderSpec
-        fields = BaseSerializerMixin.common_fields + ('name', 'packs')
+        fields = BaseSerializerMixin.common_fields + ('name', 'append_color', 'packs')
 
 
 class PDFSerializer(serializers.HyperlinkedModelSerializer, BaseSerializerMixin):
