@@ -37,7 +37,7 @@ class RenderSpec(BaseModel):
     packs = models.ManyToManyField(CardsList)
 
     def __str__(self):
-        return f'{self.name} :: {self.packs.all()}'
+        return f'{self.name} :: {", ".join(map(str, self.packs.all()))}'
 
 
 class PDF(BaseModel):

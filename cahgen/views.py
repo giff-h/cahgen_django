@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from rest_framework import mixins, permissions, viewsets
+from rest_framework import mixins, permissions, views, viewsets
 from rest_framework.response import Response
 
 from .models import PackProfile, CardsList, RenderSpec, PDF
@@ -50,3 +50,21 @@ class RenderSpecViewSet(BaseViewSet):
     """
     queryset = RenderSpec.objects.all()
     serializer_class = RenderSpecSerializer
+
+
+class PDFViewSet(BaseViewSet):
+    queryset = PDF.objects.all()
+    serializer_class = PDFSerializer
+
+
+class PDFDownload(views.APIView):
+    """
+    View to download the generated PDF content.
+    """
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, format=None):
+        """
+        Stream the application/pdf content, or 404 if it's not rendered yet.
+        """
+        return Response(headers={'filename': 'name.pdf'}, content_type='application/pdf')

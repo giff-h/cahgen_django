@@ -47,6 +47,8 @@ class RenderSpecSerializer(serializers.HyperlinkedModelSerializer, BaseSerialize
 
 
 class PDFSerializer(serializers.HyperlinkedModelSerializer, BaseSerializerMixin):
+    # download = serializers.HyperlinkedRelatedField()
+
     class Meta:
         model = PDF
-        fields = BaseSerializerMixin.common_fields + ('uuid', 'generated_content', 'render_spec')
+        fields = BaseSerializerMixin.common_fields + ('uuid', 'render_spec')

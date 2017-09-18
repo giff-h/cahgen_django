@@ -10,6 +10,7 @@ router.register(r'users', views.UserViewSet)
 router.register(r'pack_profiles', views.PackProfileViewSet)
 router.register(r'cards_lists', views.CardsListViewSet)
 router.register(r'render_specs', views.RenderSpecViewSet)
+router.register(r'pdfs', views.PDFViewSet)
 
 # The API URLs are now determined automatically by the router.
 # Additionally, we include the login URLs for the browsable API.
