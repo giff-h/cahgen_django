@@ -8,36 +8,45 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     packprofiles = serializers.HyperlinkedRelatedField(many=True,
                                                        view_name='packprofile-detail',
                                                        read_only=True)
+    cardslists = serializers.HyperlinkedRelatedField(many=True,
+                                                     view_name='cardslist-detail',
+                                                     read_only=True)
+    renderspecs = serializers.HyperlinkedRelatedField(many=True,
+                                                      view_name='renderspec-detail',
+                                                      read_only=True)
+    pdfs = serializers.HyperlinkedRelatedField(many=True,
+                                               view_name='pdf-detail',
+                                               read_only=True)
 
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'packprofiles')
+        fields = ('url', 'id', 'username', 'packprofiles', 'cardslists', 'renderspecs', 'pdfs')
 
 
-class OwnerMixin:
+class BaseSerializerMixin:
     owner = serializers.ReadOnlyField(source='owner.username')
     common_fields = ('url', 'id', 'owner', 'created')
 
 
-class PackProfileSerializer(serializers.HyperlinkedModelSerializer, OwnerMixin):
+class PackProfileSerializer(serializers.HyperlinkedModelSerializer, BaseSerializerMixin):
     class Meta:
         model = PackProfile
-        fields = OwnerMixin.common_fields + ('value', 'color_name')
+        fields = BaseSerializerMixin.common_fields + ('value', 'color_name')
 
 
-class CardsListSerializer(serializers.HyperlinkedModelSerializer, OwnerMixin):
+class CardsListSerializer(serializers.HyperlinkedModelSerializer, BaseSerializerMixin):
     class Meta:
         model = CardsList
-        fields = OwnerMixin.common_fields + ('name', 'cards', 'profile')
+        fields = BaseSerializerMixin.common_fields + ('name', 'cards', 'profile')
 
 
-class RenderSpecSerializer(serializers.HyperlinkedModelSerializer, OwnerMixin):
+class RenderSpecSerializer(serializers.HyperlinkedModelSerializer, BaseSerializerMixin):
     class Meta:
         model = RenderSpec
-        fields = OwnerMixin.common_fields + ('name', 'packs')
+        fields = BaseSerializerMixin.common_fields + ('name', 'packs')
 
 
-class PDFSerializer(serializers.HyperlinkedModelSerializer, OwnerMixin):
+class PDFSerializer(serializers.HyperlinkedModelSerializer, BaseSerializerMixin):
     class Meta:
         model = PDF
-        fields = OwnerMixin.common_fields + ('pdf', 'render_spec')
+        fields = BaseSerializerMixin.common_fields + ('pdf', 'render_spec')

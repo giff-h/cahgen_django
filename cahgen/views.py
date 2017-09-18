@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from .models import PackProfile, CardsList, RenderSpec, PDF
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwner
 from .serializers import UserSerializer, PackProfileSerializer, CardsListSerializer,\
                          RenderSpecSerializer, PDFSerializer
 
@@ -24,16 +24,38 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
-class PackProfileViewSet(viewsets.ModelViewSet):
+class BaseViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAdminUser, IsOwner)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class PackProfileViewSet(BaseViewSet):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions.
     """
     queryset = PackProfile.objects.all()
     serializer_class = PackProfileSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+
+class CardsListViewSet(BaseViewSet):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
+    """
+    queryset = CardsList.objects.all()
+    serializer_class = CardsListSerializer
+
+
+class RenderSpecViewSet(BaseViewSet):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
+    """
+    queryset = RenderSpec.objects.all()
+    serializer_class = RenderSpecSerializer
