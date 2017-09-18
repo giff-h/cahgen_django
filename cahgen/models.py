@@ -32,8 +32,14 @@ class CardsList(BaseModel):
 
 
 class RenderSpec(BaseModel):
+    WHITECARDSPDF = 0
+    BLACKCARDSPDF = 1
+    STYLE_CHOICES = ((WHITECARDSPDF, 'White cards'),
+                     (BLACKCARDSPDF, 'Black cards'))
+
     owner = models.ForeignKey('auth.User', related_name='renderspecs', on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
+    style = models.PositiveSmallIntegerField(choices=STYLE_CHOICES)
     packs = models.ManyToManyField(CardsList)
 
     def __str__(self):
