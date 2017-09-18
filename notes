@@ -1,8 +1,12 @@
-- Write serializers
 - Load dummy test data
 - Practice database dumps and reloads
 - Incorporate pdfgen engine
-  - Clean up grid printing
-  - Implement collating and smart stacking
-  - Tidy up and document engine interface
-- Compression?
+  - Canvas handle only path string or file-like stream?
+  - (L) Clean up grid printing
+  - (L) Implement collating and smart stacking
+  - (L) Tidy up and document engine interface
+- (L) Compression?
+- PDF serializer POST with only RenderSpec reference
+- New PDFDownload view for application/pdf stream, with filename handling
+- Experiment with owner(related_name=None) or no related_name
+- Block PUT of all CRUD
