@@ -37,7 +37,18 @@ class CardsList(BaseModel):
     profile = models.ForeignKey(PackProfile, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.name} [{"black" if self.is_black else "white"}]'
+        return f'{self.name} [{self.card_type}]'
+
+    @property
+    def card_type(self):
+        return "black" if self.is_black else "white"
+
+    def cards_as_list(self):
+        return [card for card in self.cards.splitlines() if card]
+
+    @property
+    def color(self):
+        return '#' + self.profile.value
 
 
 class RenderSpec(BaseModel):
@@ -48,6 +59,21 @@ class RenderSpec(BaseModel):
 
     def __str__(self):
         return f'{self.name} :: {", ".join(map(str, self.packs.all()))}'
+
+    @property
+    def pack(self):
+        return self.packs.first()
+
+    @property
+    def card_type(self):
+        return self.pack.card_type
+
+    @property
+    def is_black(self):
+        return self.pack.is_black
+
+    def iter_packs(self):
+        return self.packs.iterator()
 
 
 class PDF(BaseModel):
@@ -61,18 +87,25 @@ class PDF(BaseModel):
 
     def create_pdf(self):
         pdf = BytesIO()
-        if self.render_spec.packs.first().is_black:
+        if self.render_spec.is_black:
             generator = pdf_gen.BlackCardWriter(pdf, 2.5, 3.5, 10, 10, 14, 35, 'Calling All Heretics',
                                                 path.join(THIS_DIR, 'lib/cards.png'), 30, True, 5)
         else:
             generator = pdf_gen.WhiteCardWriter(pdf, 2.5, 3.5, 10, 10, 14, 35, 'Calling All Heretics',
                                                 path.join(THIS_DIR, 'lib/cards.png'), 30, True)
-        for cl in self.render_spec.packs.iterator():
-            profile = pdf_gen.PackProfile(cl.name, '#' + cl.profile.value)
-            generator.add_pack(cl.cards.splitlines(), profile)
+        for cl in self.render_spec.iter_packs():
+            profile = pdf_gen.PackProfile(cl.name, cl.color)
+            generator.add_pack(cl.cards_as_list(), profile)
 
         generator.write()
         self.generated_content = pdf.getvalue()
+
+    @property
+    def filename(self):  # FIXME valid filename character conversion
+        filename = self.render_spec.name
+        if self.render_spec.append_color:
+            filename += f' [{self.render_spec.card_type}]'
+        return filename
 
 
 @receiver(models.signals.pre_save, sender=PDF)
