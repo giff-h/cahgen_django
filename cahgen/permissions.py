@@ -7,5 +7,6 @@ class IsOwner(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
+        # TODO POST is allowed for any authorized user
         # All permissions are only allowed to the owner of the object
         return obj.owner == request.user
