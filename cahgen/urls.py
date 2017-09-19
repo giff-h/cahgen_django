@@ -16,5 +16,6 @@ router.register(r'pdfs', views.PDFViewSet)
 # Additionally, we include the login URLs for the browsable API.
 urlpatterns = [
     url(r'^', include(router.urls)),
+    url(r'pdfs/download/(?P<pk>[0-9]+)/$', views.PDFDownload.as_view()),
     url(r'^api-auth/', include('rest_framework.urls'))
 ]

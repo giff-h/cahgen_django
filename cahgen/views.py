@@ -1,4 +1,7 @@
 from django.contrib.auth.models import User
+from django.http import Http404
+from drf_pdf.renderer import PDFRenderer
+from drf_pdf.response import PDFResponse
 from rest_framework import mixins, permissions, views, viewsets
 from rest_framework.response import Response
 
@@ -61,10 +64,16 @@ class PDFDownload(views.APIView):
     """
     View to download the generated PDF content.
     """
+    renderer_classes = (PDFRenderer,)
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get(self, request, format=None):
+    def get(self, request, pk, format=None):
         """
         Stream the application/pdf content, or 404 if it's not rendered yet.
         """
-        return Response(headers={'filename': 'name.pdf'}, content_type='application/pdf')
+        try:
+            pdf = PDF.objects.get(pk=pk)
+        except PDF.DoesNotExist:
+            raise Http404
+
+        return PDFResponse(pdf.generated_content, file_name=pdf.filename)
