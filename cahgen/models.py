@@ -50,6 +50,9 @@ class CardsList(BaseModel):
     def color(self):
         return '#' + self.profile.value
 
+    def get_profile(self):
+        return pdf_gen.PackProfile(self.name, self.color) if self.profile else None
+
 
 class RenderSpec(BaseModel):
     owner = models.ForeignKey('auth.User', related_name='renderspecs', on_delete=models.CASCADE)
@@ -94,8 +97,7 @@ class PDF(BaseModel):
             generator = pdf_gen.WhiteCardWriter(pdf, 2.5, 3.5, 10, 10, 14, 35, 'Calling All Heretics',
                                                 path.join(THIS_DIR, 'lib/cards.png'), 30, True)
         for cl in self.render_spec.iter_packs():
-            profile = pdf_gen.PackProfile(cl.name, cl.color)
-            generator.add_pack(cl.cards_as_list(), profile)
+            generator.add_pack(cl.cards_as_list(), cl.get_profile())
 
         generator.write()
         self.generated_content = pdf.getvalue()
